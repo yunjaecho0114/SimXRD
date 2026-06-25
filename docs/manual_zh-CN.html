@@ -1,0 +1,352 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Pysimxrd 中文说明书</title>
+  <style>
+    :root {
+      --ink: #17202a;
+      --muted: #5f6b7a;
+      --line: #d9e0ea;
+      --soft: #f5f7fb;
+      --code: #101828;
+      --accent: #2f6fdd;
+      --accent2: #0f8b8d;
+    }
+    body {
+      margin: 0;
+      color: var(--ink);
+      font: 16px/1.72 -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans CJK SC", "Microsoft YaHei", Arial, sans-serif;
+      background: #ffffff;
+    }
+    header {
+      border-bottom: 1px solid var(--line);
+      background: linear-gradient(180deg, #f8fbff 0%, #ffffff 100%);
+    }
+    .wrap { max-width: 1080px; margin: 0 auto; padding: 28px 22px; }
+    .topbar { display: flex; justify-content: space-between; gap: 16px; align-items: center; flex-wrap: wrap; }
+    .lang a, .pill {
+      display: inline-block;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      padding: 5px 11px;
+      color: var(--accent);
+      text-decoration: none;
+      background: #fff;
+      margin: 2px;
+      font-size: 14px;
+    }
+    h1 { font-size: 42px; line-height: 1.12; margin: 28px 0 10px; letter-spacing: 0; }
+    h2 { font-size: 26px; margin-top: 38px; padding-top: 8px; border-top: 1px solid var(--line); }
+    h3 { font-size: 20px; margin-top: 26px; }
+    p.lead { color: var(--muted); max-width: 840px; font-size: 18px; }
+    a { color: var(--accent); }
+    .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: 14px; margin: 20px 0; }
+    .card {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 16px;
+      background: #fff;
+    }
+    .card strong { display: block; margin-bottom: 6px; }
+    .note {
+      border-left: 4px solid var(--accent2);
+      background: #eefafa;
+      padding: 12px 14px;
+      margin: 18px 0;
+    }
+    code { background: #eef2f7; padding: 2px 5px; border-radius: 4px; }
+    pre {
+      background: var(--code);
+      color: #eef4ff;
+      padding: 16px;
+      border-radius: 8px;
+      overflow: auto;
+      font-size: 14px;
+      line-height: 1.5;
+    }
+    pre code { background: transparent; padding: 0; color: inherit; }
+    table { width: 100%; border-collapse: collapse; margin: 14px 0 22px; }
+    th, td { border: 1px solid var(--line); padding: 10px 12px; vertical-align: top; }
+    th { background: var(--soft); text-align: left; }
+    figure { margin: 24px 0; }
+    figure img { max-width: 100%; border: 1px solid var(--line); border-radius: 8px; background: #fff; }
+    figcaption { color: var(--muted); font-size: 14px; margin-top: 6px; }
+    .toc a { display: block; padding: 4px 0; text-decoration: none; }
+    footer { color: var(--muted); border-top: 1px solid var(--line); margin-top: 42px; }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="wrap">
+      <div class="topbar">
+        <div>
+          <a class="pill" href="../README.md">项目主页</a>
+          <a class="pill" href="../src/README.md">PyPI 说明</a>
+          <a class="pill" href="../sim/">示例数据</a>
+        </div>
+        <div class="lang">
+          <strong>语言:</strong>
+          <a href="manual_en.html">English</a>
+          中文
+        </div>
+      </div>
+      <h1>Pysimxrd 中文说明书</h1>
+      <p class="lead">从零开始使用 Pysimxrd：准备晶体结构数据，读取示例数据库，模拟单条粉末 XRD 图谱，调节物理参数，并批量生成可用于机器学习的数据集。</p>
+    </div>
+  </header>
+
+  <main class="wrap">
+    <section class="toc card">
+      <strong>目录</strong>
+      <a href="#overview">1. Pysimxrd 能做什么</a>
+      <a href="#install">2. 安装环境</a>
+      <a href="#data">3. 从数据开始</a>
+      <a href="#single">4. 模拟一条 XRD 图谱</a>
+      <a href="#plot">5. 绘图和保存图片</a>
+      <a href="#parameters">6. 参数说明</a>
+      <a href="#wpem">7. WPEM 模式</a>
+      <a href="#batch">8. 高通量批量模拟</a>
+      <a href="#read-output">9. 读取生成的数据</a>
+      <a href="#troubleshooting">10. 常见问题</a>
+    </section>
+
+    <section id="overview">
+      <h2>1. Pysimxrd 能做什么</h2>
+      <p>Pysimxrd 用 ASE 数据库中的晶体结构生成具有真实物理扰动的粉末 X 射线衍射图谱。仓库中的 <code>sim/</code> 目录展示了三个核心流程：</p>
+      <div class="grid">
+        <div class="card"><strong>默认模拟</strong>使用 <code>generator.parser(database, entry_id)</code> 得到归一化的 2θ 强度曲线。</div>
+        <div class="card"><strong>物理扰动</strong>调节择优取向、晶粒尺寸、热振动、背景、噪声和零点偏移。</div>
+        <div class="card"><strong>数据集生成</strong>使用 <code>sim/ht_simxrd.py</code> 对大量结构批量模拟，并写入新的 ASE 数据库。</div>
+      </div>
+      <p>程序包含两条模拟路径。默认路径使用 pymatgen 计算峰位，并结合统一的峰展宽、背景和噪声模型。可选的 <code>sim_model="WPEM"</code> 路径使用仓库内部的衍射条件、系统消光、多重度和结构因子计算逻辑。</p>
+    </section>
+
+    <section id="install">
+      <h2>2. 安装环境</h2>
+      <p><code>sim/tutorial_sim.ipynb</code> 中建议使用 Python 3.9 以上版本。推荐先创建干净环境：</p>
+      <pre><code>conda create -n pysimxrd python=3.10
+conda activate pysimxrd</code></pre>
+      <p>发布到 PyPI 后可直接安装：</p>
+      <pre><code>pip install Pysimxrd</code></pre>
+      <p>如果从当前仓库开发或测试，进入 <code>src</code> 目录安装：</p>
+      <pre><code>cd SimXRD/src
+pip install -e .</code></pre>
+      <p>运行示例时建议额外安装：</p>
+      <pre><code>pip install matplotlib tqdm</code></pre>
+      <div class="note">如果没有安装包，也可以在项目根目录用 <code>PYTHONPATH=src</code> 临时运行脚本；更推荐使用 <code>pip install -e src</code> 或在 <code>src</code> 下安装。</div>
+    </section>
+
+    <section id="data">
+      <h2>3. 从数据开始</h2>
+      <p>Pysimxrd 的输入是 ASE 数据库。仓库提供了一个小型示例数据库：<code>sim/demo_mp.db</code>。</p>
+      <h3>3.1 查看示例数据库</h3>
+      <pre><code>from ase.db import connect
+
+database = connect("sim/demo_mp.db")
+print("结构数量:", database.count())
+
+row = database.get(id=1)
+atoms = row.toatoms()
+
+print("化学式:", atoms.get_chemical_formula())
+print("晶胞参数:", atoms.cell.cellpar())
+print("前几个元素:", atoms.get_chemical_symbols()[:10])</code></pre>
+      <p>ASE 数据库中的每一行保存一个原子结构。Pysimxrd 根据行号读取结构，在需要时转换为 conventional cell，然后返回模拟的 XRD 曲线。</p>
+
+      <h3>3.2 准备自己的数据库</h3>
+      <p>如果已经有 ASE <code>Atoms</code> 对象，可以直接写入数据库：</p>
+      <pre><code>from ase.db import connect
+
+db = connect("my_crystals.db")
+db.write(atoms, name="sample_001")</code></pre>
+      <p>如果结构来自 CIF 文件，可以先用 ASE 读取，再写入数据库：</p>
+      <pre><code>from ase.io import read
+from ase.db import connect
+
+db = connect("my_crystals.db")
+atoms = read("example.cif")
+db.write(atoms, name="example")</code></pre>
+      <p>之后就可以像使用 <code>sim/demo_mp.db</code> 一样使用 <code>my_crystals.db</code>。</p>
+    </section>
+
+    <section id="single">
+      <h2>4. 模拟一条 XRD 图谱</h2>
+      <p>核心入口是 <code>Pysimxrd.generator.parser</code>，返回 <code>x</code> 和 <code>y</code> 两个数组。</p>
+      <pre><code>from ase.db import connect
+from Pysimxrd import generator
+
+database = connect("sim/demo_mp.db")
+entry_id = 1
+
+x, y = generator.parser(database, entry_id)
+
+print(len(x), len(y))
+print(x[:5])
+print(y[:5])</code></pre>
+      <p>默认情况下，<code>x</code> 是 2θ 角度，单位为 degree；<code>y</code> 是归一化强度。</p>
+
+      <h3>输出 d-spacing 而不是 2θ</h3>
+      <pre><code>x_d, intensity = generator.parser(
+    database,
+    entry_id,
+    xrd="real",
+)</code></pre>
+    </section>
+
+    <section id="plot">
+      <h2>5. 绘图和保存图片</h2>
+      <p><code>sim/XRD.ipynb</code> 展示了默认参数、增强择优取向和增强热振动三种情况。下面是等价的 Python 脚本写法：</p>
+      <pre><code>import matplotlib.pyplot as plt
+from ase.db import connect
+from Pysimxrd import generator
+
+database = connect("sim/demo_mp.db")
+x, y = generator.parser(database, entry_id=8)
+
+plt.figure(figsize=(8, 6))
+plt.plot(x, y, color="royalblue", linewidth=2.5)
+plt.xlabel("2θ (degrees)", fontsize=14, weight="bold")
+plt.ylabel("Intensity (a.u.)", fontsize=14, weight="bold")
+plt.grid(True, which="both", linestyle="--", linewidth=0.5)
+plt.tight_layout()
+plt.savefig("xrd_pattern.png", dpi=300)
+plt.show()</code></pre>
+      <figure>
+        <img src="../sim/xrd_pattern1.png" alt="默认 XRD 模拟图谱">
+        <figcaption>来自 <code>sim/XRD.ipynb</code> 的默认模拟结果。</figcaption>
+      </figure>
+    </section>
+
+    <section id="parameters">
+      <h2>6. 参数说明</h2>
+      <p><code>sim/ht_simxrd.py</code> 中集中说明了主要参数。最常用的控制项如下：</p>
+      <table>
+        <thead><tr><th>参数</th><th>含义</th><th>典型用途</th></tr></thead>
+        <tbody>
+          <tr><td><code>grainsize</code></td><td>样品晶粒尺寸，单位 Angstrom。</td><td>数值越小，峰展宽越明显。</td></tr>
+          <tr><td><code>prefect_orientation</code></td><td>择优取向扰动范围。名称保留历史拼写。</td><td>增大会改变相对峰强。</td></tr>
+          <tr><td><code>thermo_vibration</code></td><td>热振动幅度，单位 Angstrom。</td><td>增大会削弱并展宽峰特征。</td></tr>
+          <tr><td><code>zero_shift</code></td><td>2θ 零点偏移，单位 degree。</td><td>模拟仪器零点误差。</td></tr>
+          <tr><td><code>background_order</code></td><td>多项式背景阶数。</td><td>通常使用 4 或 6。</td></tr>
+          <tr><td><code>background_ratio</code></td><td>背景强度相对峰强的比例。</td><td>增大后基线更明显。</td></tr>
+          <tr><td><code>mixture_noise_ratio</code></td><td>均匀混合噪声比例。</td><td>增大后随机强度噪声更强。</td></tr>
+          <tr><td><code>deformation</code></td><td>是否随机扰动晶格常数。</td><td>用于数据增强。</td></tr>
+          <tr><td><code>lattice_extinction_ratio</code></td><td>晶格拉伸/压缩扰动比例。</td><td>控制晶格长度随机变化。</td></tr>
+          <tr><td><code>lattice_torsion_ratio</code></td><td>晶格剪切扰动比例。</td><td>控制晶格角度或剪切变化。</td></tr>
+        </tbody>
+      </table>
+
+      <h3>来自 <code>sim/XRD.ipynb</code> 的例子</h3>
+      <pre><code># 增强择优取向扰动
+x, y = generator.parser(database, entry_id=8, prefect_orientation=[0.2, 0.2])
+
+# 增强热振动，同时减小晶粒尺寸
+x, y = generator.parser(database, entry_id=8, thermo_vibration=0.4, grainsize=5)</code></pre>
+      <div class="grid">
+        <figure>
+          <img src="../sim/xrd_pattern2.png" alt="择优取向示例">
+          <figcaption>择优取向扰动示例。</figcaption>
+        </figure>
+        <figure>
+          <img src="../sim/xrd_pattern3.png" alt="热振动示例">
+          <figcaption>热振动增强与小晶粒示例。</figcaption>
+        </figure>
+      </div>
+    </section>
+
+    <section id="wpem">
+      <h2>7. WPEM 模式</h2>
+      <p>如果希望使用仓库内部的衍射条件、系统消光、多重度和结构因子流程，可以启用 WPEM 模式。</p>
+      <pre><code>x, y = generator.parser(
+    database,
+    entry_id=1,
+    sim_model="WPEM",
+)</code></pre>
+      <p>WPEM 模式下启用晶格变形：</p>
+      <pre><code>x, y = generator.parser(
+    database,
+    entry_id=1,
+    sim_model="WPEM",
+    deformation=True,
+    lattice_extinction_ratio=0.01,
+    lattice_torsion_ratio=0.01,
+)</code></pre>
+      <div class="note">在 WPEM + deformation 路径中，空间群、点阵中心符号、晶系和原子坐标来自未变形的 conventional cell；变形后的 lattice constants 只用于峰位和 d-spacing 计算。这样可以保持消光和结构因子逻辑与原始对称性一致，同时允许峰位发生扰动。</div>
+    </section>
+
+    <section id="batch">
+      <h2>8. 高通量批量模拟</h2>
+      <p><code>sim/ht_simxrd.py</code> 展示了如何从一个输入数据库批量生成多条模拟图谱，并保存到新的 ASE 数据库。</p>
+      <p>在 <code>sim/</code> 目录运行示例：</p>
+      <pre><code>cd sim
+python ht_simxrd.py</code></pre>
+      <p>长时间任务可以使用 notebook 中建议的方式后台运行：</p>
+      <pre><code>nohup python ht_simxrd.py &</code></pre>
+      <p>该脚本读取 <code>demo_mp.db</code>，写入 <code>train.db</code>。示例中默认每个结构生成 1 条模拟谱。</p>
+
+      <h3>批量模拟的核心写法</h3>
+      <pre><code>from ase.db import connect
+from Pysimxrd import generator
+
+input_db = connect("my_crystals.db")
+output_db = connect("my_simulated_xrd.db")
+
+for row in input_db.select():
+    atoms = row.toatoms()
+    x, y = generator.parser(input_db, row.id, deformation=True)
+    output_db.write(
+        atoms=atoms,
+        latt_dis=str(x),
+        intensity=str(y),
+        Label=row.id,
+    )</code></pre>
+      <p>完整脚本中还会为每次模拟随机生成晶粒尺寸、择优取向、热振动和零点偏移等参数，从而得到更丰富的训练数据。</p>
+    </section>
+
+    <section id="read-output">
+      <h2>9. 读取生成的数据</h2>
+      <p>生成的新数据库会保存原始 atoms，同时把模拟得到的数组写入字符串字段。读取时可按保存格式转回数组。</p>
+      <pre><code>from ase.db import connect
+import numpy as np
+
+db = connect("sim/train.db")
+row = db.get(id=1)
+
+atoms = row.toatoms()
+x = np.fromstring(row.latt_dis.strip("[]"), sep=" ")
+y = np.fromstring(row.intensity.strip("[]"), sep=",")
+
+print(atoms.get_chemical_formula())
+print(x.shape, y.shape)</code></pre>
+      <p>如果保存时使用的是 <code>str(list(x))</code>，可以用 <code>ast.literal_eval</code>：</p>
+      <pre><code>import ast
+import numpy as np
+
+x = np.array(ast.literal_eval(row.latt_dis))
+y = np.array(ast.literal_eval(row.intensity))</code></pre>
+    </section>
+
+    <section id="troubleshooting">
+      <h2>10. 常见问题</h2>
+      <table>
+        <thead><tr><th>问题</th><th>解决方法</th></tr></thead>
+        <tbody>
+          <tr><td><code>ModuleNotFoundError: Pysimxrd</code></td><td>在仓库根目录运行 <code>pip install -e src</code>，或使用 <code>PYTHONPATH=src</code>。</td></tr>
+          <tr><td>找不到数据库路径</td><td>注意当前工作目录。从项目根目录使用 <code>sim/demo_mp.db</code>；从 <code>sim/</code> 目录内部使用 <code>demo_mp.db</code>。</td></tr>
+          <tr><td>entry id 报错</td><td>先检查 <code>database.count()</code>，ASE 数据库行号通常从 1 开始。</td></tr>
+          <tr><td>输出坐标轴不符合预期</td><td><code>xrd="reciprocal"</code> 输出 2θ；<code>xrd="real"</code> 输出 d-spacing。</td></tr>
+          <tr><td>批量模拟太慢</td><td>参考 <code>sim/ht_simxrd.py</code> 中的多进程写法，先用较小的 <code>times</code> 测试。</td></tr>
+        </tbody>
+      </table>
+    </section>
+  </main>
+
+  <footer>
+    <div class="wrap">
+      Pysimxrd 中文说明书。示例来源：<code>sim/XRD.ipynb</code>、<code>sim/tutorial_sim.ipynb</code> 和 <code>sim/ht_simxrd.py</code>。
+    </div>
+  </footer>
+</body>
+</html>

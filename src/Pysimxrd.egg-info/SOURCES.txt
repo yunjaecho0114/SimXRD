@@ -1,0 +1,14 @@
+README.md
+setup.py
+Pysimxrd/CGCNN_atom_emb.json
+Pysimxrd/__init__.py
+Pysimxrd/generator.py
+Pysimxrd.egg-info/PKG-INFO
+Pysimxrd.egg-info/SOURCES.txt
+Pysimxrd.egg-info/dependency_links.txt
+Pysimxrd.egg-info/requires.txt
+Pysimxrd.egg-info/top_level.txt
+Pysimxrd/utils/MatgenKit.py
+Pysimxrd/utils/WPEMsim.py
+Pysimxrd/utils/__init__.py
+Pysimxrd/utils/funs.py

@@ -1,0 +1,352 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Pysimxrd User Manual</title>
+  <style>
+    :root {
+      --ink: #17202a;
+      --muted: #5f6b7a;
+      --line: #d9e0ea;
+      --soft: #f5f7fb;
+      --code: #101828;
+      --accent: #2f6fdd;
+      --accent2: #0f8b8d;
+    }
+    body {
+      margin: 0;
+      color: var(--ink);
+      font: 16px/1.65 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+      background: #ffffff;
+    }
+    header {
+      border-bottom: 1px solid var(--line);
+      background: linear-gradient(180deg, #f8fbff 0%, #ffffff 100%);
+    }
+    .wrap { max-width: 1080px; margin: 0 auto; padding: 28px 22px; }
+    .topbar { display: flex; justify-content: space-between; gap: 16px; align-items: center; flex-wrap: wrap; }
+    .lang a, .pill {
+      display: inline-block;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      padding: 5px 11px;
+      color: var(--accent);
+      text-decoration: none;
+      background: #fff;
+      margin: 2px;
+      font-size: 14px;
+    }
+    h1 { font-size: 42px; line-height: 1.12; margin: 28px 0 10px; letter-spacing: 0; }
+    h2 { font-size: 26px; margin-top: 38px; padding-top: 8px; border-top: 1px solid var(--line); }
+    h3 { font-size: 20px; margin-top: 26px; }
+    p.lead { color: var(--muted); max-width: 820px; font-size: 18px; }
+    a { color: var(--accent); }
+    .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: 14px; margin: 20px 0; }
+    .card {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 16px;
+      background: #fff;
+    }
+    .card strong { display: block; margin-bottom: 6px; }
+    .note {
+      border-left: 4px solid var(--accent2);
+      background: #eefafa;
+      padding: 12px 14px;
+      margin: 18px 0;
+    }
+    code { background: #eef2f7; padding: 2px 5px; border-radius: 4px; }
+    pre {
+      background: var(--code);
+      color: #eef4ff;
+      padding: 16px;
+      border-radius: 8px;
+      overflow: auto;
+      font-size: 14px;
+      line-height: 1.5;
+    }
+    pre code { background: transparent; padding: 0; color: inherit; }
+    table { width: 100%; border-collapse: collapse; margin: 14px 0 22px; }
+    th, td { border: 1px solid var(--line); padding: 10px 12px; vertical-align: top; }
+    th { background: var(--soft); text-align: left; }
+    figure { margin: 24px 0; }
+    figure img { max-width: 100%; border: 1px solid var(--line); border-radius: 8px; background: #fff; }
+    figcaption { color: var(--muted); font-size: 14px; margin-top: 6px; }
+    .toc a { display: block; padding: 4px 0; text-decoration: none; }
+    footer { color: var(--muted); border-top: 1px solid var(--line); margin-top: 42px; }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="wrap">
+      <div class="topbar">
+        <div>
+          <a class="pill" href="../README.md">Project README</a>
+          <a class="pill" href="../src/README.md">PyPI README</a>
+          <a class="pill" href="../sim/">Example Data</a>
+        </div>
+        <div class="lang">
+          <strong>Language:</strong>
+          English
+          <a href="manual_zh-CN.html">中文</a>
+        </div>
+      </div>
+      <h1>Pysimxrd User Manual</h1>
+      <p class="lead">A practical guide for starting from crystal-structure data, reading the provided demo database, simulating one powder XRD pattern, tuning physical conditions, and building a high-throughput simulated dataset.</p>
+    </div>
+  </header>
+
+  <main class="wrap">
+    <section class="toc card">
+      <strong>Contents</strong>
+      <a href="#overview">1. What Pysimxrd Does</a>
+      <a href="#install">2. Installation</a>
+      <a href="#data">3. Start from Data</a>
+      <a href="#single">4. Simulate One Pattern</a>
+      <a href="#plot">5. Plot and Save Figures</a>
+      <a href="#parameters">6. Parameter Guide</a>
+      <a href="#wpem">7. WPEM Mode</a>
+      <a href="#batch">8. High-throughput Simulation</a>
+      <a href="#read-output">9. Read Generated Data</a>
+      <a href="#troubleshooting">10. Troubleshooting</a>
+    </section>
+
+    <section id="overview">
+      <h2>1. What Pysimxrd Does</h2>
+      <p>Pysimxrd generates physically varied powder X-ray diffraction patterns from crystal structures stored in an ASE database. The examples in <code>sim/</code> show three common workflows:</p>
+      <div class="grid">
+        <div class="card"><strong>Default simulation</strong>Use <code>generator.parser(database, entry_id)</code> to obtain a normalized 2-theta intensity profile.</div>
+        <div class="card"><strong>Physical variation</strong>Change preferred orientation, grain size, thermal vibration, background, noise, and zero shift.</div>
+        <div class="card"><strong>Dataset generation</strong>Use <code>sim/ht_simxrd.py</code> to generate many simulated patterns and save them into a new ASE database.</div>
+      </div>
+      <p>The package has two simulation paths. The default path uses pymatgen for peak positions and the shared broadening/noise model. The optional <code>sim_model="WPEM"</code> path uses in-repository diffraction-condition, extinction, multiplicity, and structure-factor logic.</p>
+    </section>
+
+    <section id="install">
+      <h2>2. Installation</h2>
+      <p>Create a clean Python environment. The simulation tutorial in <code>sim/tutorial_sim.ipynb</code> recommends Python newer than 3.9.</p>
+      <pre><code>conda create -n pysimxrd python=3.10
+conda activate pysimxrd</code></pre>
+      <p>Install from PyPI after release:</p>
+      <pre><code>pip install Pysimxrd</code></pre>
+      <p>Install from this repository during development:</p>
+      <pre><code>cd SimXRD/src
+pip install -e .</code></pre>
+      <p>Optional packages for the examples:</p>
+      <pre><code>pip install matplotlib tqdm</code></pre>
+      <div class="note">If you work from the repository without installing, run scripts with <code>PYTHONPATH=src</code> from the project root, or run them from an environment where <code>Pysimxrd</code> is installed.</div>
+    </section>
+
+    <section id="data">
+      <h2>3. Start from Data</h2>
+      <p>Pysimxrd expects crystal structures in an ASE database. The repository includes a small example database at <code>sim/demo_mp.db</code>.</p>
+      <h3>3.1 Inspect the demo database</h3>
+      <pre><code>from ase.db import connect
+
+database = connect("sim/demo_mp.db")
+print("number of structures:", database.count())
+
+row = database.get(id=1)
+atoms = row.toatoms()
+
+print("formula:", atoms.get_chemical_formula())
+print("cell parameters:", atoms.cell.cellpar())
+print("symbols:", atoms.get_chemical_symbols()[:10])</code></pre>
+      <p>An ASE row stores an atomic structure. Pysimxrd reads this row, converts the structure when needed, and returns a simulated XRD profile.</p>
+
+      <h3>3.2 Prepare your own database</h3>
+      <p>If you already have ASE <code>Atoms</code> objects, write them into a database:</p>
+      <pre><code>from ase.db import connect
+
+db = connect("my_crystals.db")
+db.write(atoms, name="sample_001")</code></pre>
+      <p>If your structures are in CIF files, load them with ASE and write them to a database:</p>
+      <pre><code>from ase.io import read
+from ase.db import connect
+
+db = connect("my_crystals.db")
+atoms = read("example.cif")
+db.write(atoms, name="example")</code></pre>
+      <p>After that, use <code>my_crystals.db</code> in exactly the same way as <code>sim/demo_mp.db</code>.</p>
+    </section>
+
+    <section id="single">
+      <h2>4. Simulate One Pattern</h2>
+      <p>The core entry point is <code>Pysimxrd.generator.parser</code>. It returns <code>x</code> and <code>y</code> arrays.</p>
+      <pre><code>from ase.db import connect
+from Pysimxrd import generator
+
+database = connect("sim/demo_mp.db")
+entry_id = 1
+
+x, y = generator.parser(database, entry_id)
+
+print(len(x), len(y))
+print(x[:5])
+print(y[:5])</code></pre>
+      <p>By default, <code>x</code> is 2-theta in degrees and <code>y</code> is normalized intensity.</p>
+
+      <h3>Return d-spacing instead of 2-theta</h3>
+      <pre><code>x_d, intensity = generator.parser(
+    database,
+    entry_id,
+    xrd="real",
+)</code></pre>
+    </section>
+
+    <section id="plot">
+      <h2>5. Plot and Save Figures</h2>
+      <p>The notebook <code>sim/XRD.ipynb</code> plots default settings, stronger preferred orientation, and stronger thermal vibration. The same code can be used in a Python script.</p>
+      <pre><code>import matplotlib.pyplot as plt
+from ase.db import connect
+from Pysimxrd import generator
+
+database = connect("sim/demo_mp.db")
+x, y = generator.parser(database, entry_id=8)
+
+plt.figure(figsize=(8, 6))
+plt.plot(x, y, color="royalblue", linewidth=2.5)
+plt.xlabel("2θ (degrees)", fontsize=14, weight="bold")
+plt.ylabel("Intensity (a.u.)", fontsize=14, weight="bold")
+plt.grid(True, which="both", linestyle="--", linewidth=0.5)
+plt.tight_layout()
+plt.savefig("xrd_pattern.png", dpi=300)
+plt.show()</code></pre>
+      <figure>
+        <img src="../sim/xrd_pattern1.png" alt="Default simulated XRD pattern">
+        <figcaption>Default simulation example from <code>sim/XRD.ipynb</code>.</figcaption>
+      </figure>
+    </section>
+
+    <section id="parameters">
+      <h2>6. Parameter Guide</h2>
+      <p>The high-throughput script <code>sim/ht_simxrd.py</code> documents the main simulation parameters. The most useful controls are:</p>
+      <table>
+        <thead><tr><th>Parameter</th><th>Meaning</th><th>Typical use</th></tr></thead>
+        <tbody>
+          <tr><td><code>grainsize</code></td><td>Specimen grain size in Angstroms.</td><td>Smaller values broaden peaks.</td></tr>
+          <tr><td><code>prefect_orientation</code></td><td>Preferred-orientation variation range. The name is kept for compatibility.</td><td>Increase to vary relative peak intensities.</td></tr>
+          <tr><td><code>thermo_vibration</code></td><td>Thermal vibration amplitude in Angstroms.</td><td>Higher values reduce and broaden peak features.</td></tr>
+          <tr><td><code>zero_shift</code></td><td>2-theta angular offset in degrees.</td><td>Simulate instrument zero error.</td></tr>
+          <tr><td><code>background_order</code></td><td>Polynomial background order.</td><td>Usually 4 or 6.</td></tr>
+          <tr><td><code>background_ratio</code></td><td>Background strength relative to peak intensity.</td><td>Increase for noisier baseline.</td></tr>
+          <tr><td><code>mixture_noise_ratio</code></td><td>Uniform mixed-noise ratio.</td><td>Increase for random intensity noise.</td></tr>
+          <tr><td><code>deformation</code></td><td>Whether to randomly deform lattice constants.</td><td>Use for data augmentation.</td></tr>
+          <tr><td><code>lattice_extinction_ratio</code></td><td>Stretching/compression ratio for deformation.</td><td>Controls random length perturbation.</td></tr>
+          <tr><td><code>lattice_torsion_ratio</code></td><td>Shear ratio for deformation.</td><td>Controls random angular/shear perturbation.</td></tr>
+        </tbody>
+      </table>
+
+      <h3>Examples from <code>sim/XRD.ipynb</code></h3>
+      <pre><code># More preferred-orientation variation
+x, y = generator.parser(database, entry_id=8, prefect_orientation=[0.2, 0.2])
+
+# Stronger thermal vibration and smaller grain size
+x, y = generator.parser(database, entry_id=8, thermo_vibration=0.4, grainsize=5)</code></pre>
+      <div class="grid">
+        <figure>
+          <img src="../sim/xrd_pattern2.png" alt="Preferred orientation example">
+          <figcaption>Preferred-orientation example.</figcaption>
+        </figure>
+        <figure>
+          <img src="../sim/xrd_pattern3.png" alt="Thermal vibration example">
+          <figcaption>Thermal vibration and small-grain example.</figcaption>
+        </figure>
+      </div>
+    </section>
+
+    <section id="wpem">
+      <h2>7. WPEM Mode</h2>
+      <p>Use WPEM mode when you want the in-repository diffraction condition, systematic extinction, multiplicity, and structure-factor pipeline.</p>
+      <pre><code>x, y = generator.parser(
+    database,
+    entry_id=1,
+    sim_model="WPEM",
+)</code></pre>
+      <p>Use WPEM with deformation:</p>
+      <pre><code>x, y = generator.parser(
+    database,
+    entry_id=1,
+    sim_model="WPEM",
+    deformation=True,
+    lattice_extinction_ratio=0.01,
+    lattice_torsion_ratio=0.01,
+)</code></pre>
+      <div class="note">In WPEM deformation mode, symmetry information is obtained from the undeformed conventional cell. Deformed lattice constants are then used for peak position and d-spacing calculations. This keeps extinction and atom coordinates tied to the original symmetry while still producing peak shifts.</div>
+    </section>
+
+    <section id="batch">
+      <h2>8. High-throughput Simulation</h2>
+      <p>The file <code>sim/ht_simxrd.py</code> shows how to simulate many patterns from one input database and save them to a new ASE database.</p>
+      <p>Run the example from the <code>sim/</code> directory:</p>
+      <pre><code>cd sim
+python ht_simxrd.py</code></pre>
+      <p>For a long job, the notebook suggests:</p>
+      <pre><code>nohup python ht_simxrd.py &</code></pre>
+      <p>The script reads <code>demo_mp.db</code>, writes <code>train.db</code>, and by default generates one simulated pattern per structure in the demo script.</p>
+
+      <h3>Core batch pattern</h3>
+      <pre><code>from ase.db import connect
+from Pysimxrd import generator
+
+input_db = connect("my_crystals.db")
+output_db = connect("my_simulated_xrd.db")
+
+for row in input_db.select():
+    atoms = row.toatoms()
+    x, y = generator.parser(input_db, row.id, deformation=True)
+    output_db.write(
+        atoms=atoms,
+        latt_dis=str(x),
+        intensity=str(y),
+        Label=row.id,
+    )</code></pre>
+      <p>The high-throughput script adds randomized parameters such as grain size, orientation, thermal vibration, and zero shift for each simulation.</p>
+    </section>
+
+    <section id="read-output">
+      <h2>9. Read Generated Data</h2>
+      <p>The generated database stores the original atoms plus simulated arrays as string fields. Convert them back to arrays with <code>ast.literal_eval</code> or <code>numpy.fromstring</code> depending on the string format you wrote.</p>
+      <pre><code>from ase.db import connect
+import numpy as np
+
+db = connect("sim/train.db")
+row = db.get(id=1)
+
+atoms = row.toatoms()
+x = np.fromstring(row.latt_dis.strip("[]"), sep=" ")
+y = np.fromstring(row.intensity.strip("[]"), sep=",")
+
+print(atoms.get_chemical_formula())
+print(x.shape, y.shape)</code></pre>
+      <p>If you save arrays with <code>str(list(x))</code>, use <code>ast.literal_eval</code> instead:</p>
+      <pre><code>import ast
+import numpy as np
+
+x = np.array(ast.literal_eval(row.latt_dis))
+y = np.array(ast.literal_eval(row.intensity))</code></pre>
+    </section>
+
+    <section id="troubleshooting">
+      <h2>10. Troubleshooting</h2>
+      <table>
+        <thead><tr><th>Problem</th><th>Fix</th></tr></thead>
+        <tbody>
+          <tr><td><code>ModuleNotFoundError: Pysimxrd</code></td><td>Install the package with <code>pip install -e src</code> from the repository root, or run with <code>PYTHONPATH=src</code>.</td></tr>
+          <tr><td>Database path not found</td><td>Use paths relative to the current working directory. From the project root use <code>sim/demo_mp.db</code>; from inside <code>sim/</code> use <code>demo_mp.db</code>.</td></tr>
+          <tr><td>Entry id error</td><td>Check <code>database.count()</code> and use ASE row ids, usually starting from 1.</td></tr>
+          <tr><td>Unexpected output axis</td><td>Use <code>xrd="reciprocal"</code> for 2-theta and <code>xrd="real"</code> for d-spacing.</td></tr>
+          <tr><td>Slow batch simulation</td><td>Use the process-pool pattern in <code>sim/ht_simxrd.py</code> and start with a small <code>times</code> value for testing.</td></tr>
+        </tbody>
+      </table>
+    </section>
+  </main>
+
+  <footer>
+    <div class="wrap">
+      Pysimxrd manual. Source examples: <code>sim/XRD.ipynb</code>, <code>sim/tutorial_sim.ipynb</code>, and <code>sim/ht_simxrd.py</code>.
+    </div>
+  </footer>
+</body>
+</html>

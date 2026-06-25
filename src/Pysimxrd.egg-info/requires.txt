@@ -1,0 +1,7 @@
+ase
+numpy
+pandas
+pymatgen
+scipy
+spglib
+sympy

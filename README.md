@@ -3,29 +3,38 @@
 # SimXRD-4M [ICLR 2025](https://iclr.cc/virtual/2025/poster/28452)
 
 <p align="center">
-
-  <!-- ICLR -->
-  <a href="https://openreview.net/forum?id=mkuB677eMM">
-    <img src="https://img.shields.io/badge/ICLR-2025%20OpenReview-4b44ce?style=for-the-badge" />
-  </a>
-
+  <strong>Language / 语言 / 言語 / 언어 / Sprache / Idioma:</strong>
+  English | <a href="docs/README.zh-CN.md">中文</a> | <a href="docs/README.ja.md">日本語</a> | <a href="docs/README.ko.md">한국어</a> | <a href="docs/README.de.md">Deutsch</a> | <a href="docs/README.es.md">Español</a>
+  <br>
+  <strong>User Manual:</strong> <a href="docs/manual_en.html">English</a> | <a href="docs/manual_zh-CN.html">中文</a>
 </p>
 
 <p align="center">
 
-  <!-- Links -->
   <a href="https://openreview.net/forum?id=mkuB677eMM">
-    <img src="https://img.shields.io/badge/Paper-OpenReview-4b44ce?style=for-the-badge" />
+    <img src="https://img.shields.io/badge/ICLR-2025%20OpenReview-4b44ce" />
   </a>
-
-<a href="https://onedrive.live.com/?redeem=aHR0cHM6Ly8xZHJ2Lm1zL2YvYy81ZDg2MjYyMzg0NzBiNDllL0V1d09VMTNQM2JoSHNiU2lEMTRON3hZQmZCTEdCYTFjX0VhVkhrbGZUajRxZXc%5FZT0xa3liaFg&id=5D8626238470B49E%21s5d530eecddcf47b8b1b4a20f5e0def16&cid=5D8626238470B49E">
-  <img src="https://img.shields.io/badge/Dataset-OneDrive-0078D4?style=for-the-badge&logo=microsoft-onedrive&logoColor=white" />
-</a>
-
+  <a href="https://openreview.net/forum?id=mkuB677eMM">
+    <img src="https://img.shields.io/badge/Paper-OpenReview-4b44ce" />
+  </a>
+  <a href="https://onedrive.live.com/?redeem=aHR0cHM6Ly8xZHJ2Lm1zL2YvYy81ZDg2MjYyMzg0NzBiNDllL0V1d09VMTNQM2JoSHNiU2lEMTRON3hZQmZCTEdCYTFjX0VhVkhrbGZUajRxZXc%5FZT0xa3liaFg&id=5D8626238470B49E%21s5d530eecddcf47b8b1b4a20f5e0def16&cid=5D8626238470B49E">
+    <img src="https://img.shields.io/badge/Dataset-OneDrive-0078D4?logo=microsoft-onedrive&logoColor=white" />
+  </a>
   <a href="https://github.com/compasszzn/XRDBench">
-    <img src="https://img.shields.io/badge/Benchmark-Code-blue?style=for-the-badge&logo=github" />
+    <img src="https://img.shields.io/badge/Benchmark-Code-blue?logo=github" />
   </a>
-
+  <a href="https://github.com/Bin-Cao/SimXRD/stargazers">
+    <img src="https://img.shields.io/github/stars/Bin-Cao/SimXRD?logo=github&label=Stars" />
+  </a>
+  <a href="LICENSE">
+    <img src="https://img.shields.io/github/license/Bin-Cao/SimXRD" />
+  </a>
+  <a href="https://www.python.org/">
+    <img src="https://img.shields.io/badge/Python-3.9%2B-3776AB?logo=python&logoColor=white" />
+  </a>
+  <a href="https://pypi.org/project/Pysimxrd/">
+    <img src="https://img.shields.io/badge/PyPI-Pysimxrd-3775A9?logo=pypi&logoColor=white" />
+  </a>
 </p>
 
 

@@ -1,0 +1,64 @@
+name: Deploy HTML Manual
+
+on:
+  push:
+    branches:
+      - main
+      - master
+    paths:
+      - "docs/**"
+      - "sim/xrd_pattern*.png"
+      - ".github/workflows/deploy-manual.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: github-pages
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Configure Pages
+        uses: actions/configure-pages@v5
+
+      - name: Prepare static site
+        run: |
+          mkdir -p _site/docs _site/sim
+          cp -R docs/. _site/docs/
+          cp sim/xrd_pattern*.png _site/sim/
+          touch _site/.nojekyll
+          cat > _site/index.html <<'EOF'
+          <!doctype html>
+          <html lang="en">
+          <head>
+            <meta charset="utf-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1">
+            <meta http-equiv="refresh" content="0; url=docs/manual_en.html">
+            <title>Pysimxrd Manual</title>
+          </head>
+          <body>
+            <p>Redirecting to <a href="docs/manual_en.html">Pysimxrd Manual</a>.</p>
+          </body>
+          </html>
+          EOF
+
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: _site
+
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

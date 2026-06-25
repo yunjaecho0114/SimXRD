@@ -1,0 +1,220 @@
+Metadata-Version: 2.4
+Name: Pysimxrd
+Version: 1.0.0
+Summary: Physical simulation of powder X-ray diffraction patterns
+Home-page: https://github.com/Bin-Cao/SimXRD
+Author: Cao Bin
+Author-email: bcao686@connect.hkust-gz.edu.cn
+License: MIT
+Project-URL: Homepage, https://bin-cao.github.io
+Project-URL: Source, https://github.com/Bin-Cao/SimXRD
+Keywords: xrd,powder diffraction,crystallography,materials science,simulation
+Classifier: Development Status :: 5 - Production/Stable
+Classifier: Intended Audience :: Science/Research
+Classifier: Natural Language :: English
+Classifier: Programming Language :: Python :: 3
+Classifier: Programming Language :: Python :: 3.9
+Classifier: Programming Language :: Python :: 3.10
+Classifier: Programming Language :: Python :: 3.11
+Classifier: Programming Language :: Python :: 3.12
+Classifier: Topic :: Scientific/Engineering :: Chemistry
+Classifier: Topic :: Scientific/Engineering :: Physics
+Requires-Python: >=3.9
+Description-Content-Type: text/markdown
+Requires-Dist: ase
+Requires-Dist: numpy
+Requires-Dist: pandas
+Requires-Dist: pymatgen
+Requires-Dist: scipy
+Requires-Dist: spglib
+Requires-Dist: sympy
+Dynamic: author
+Dynamic: author-email
+Dynamic: classifier
+Dynamic: description
+Dynamic: description-content-type
+Dynamic: home-page
+Dynamic: keywords
+Dynamic: license
+Dynamic: project-url
+Dynamic: requires-dist
+Dynamic: requires-python
+Dynamic: summary
+
+# Pysimxrd
+
+Physical simulation of powder X-ray diffraction patterns.
+
+Pysimxrd provides high-level utilities for generating simulated powder XRD
+profiles from crystal structures stored in ASE database files. It includes a
+pymatgen-backed simulation path and a WPEM path for diffraction conditions,
+systematic extinction, multiplicity, structure factors, peak broadening,
+background, and noise.
+
+Bin Cao, PhD of HKUST(Guangzhou), https://bin-cao.github.io  
+URL: https://github.com/Bin-Cao/SimXRD
+
+## Features
+
+- Simulate powder XRD patterns from ASE database entries.
+- Support 2-theta output and d-spacing output.
+- Include peak broadening from crystallite size and instrumental effects.
+- Add preferred-orientation variation, thermal vibration, background, and noise.
+- Provide a WPEM path with symmetry-based extinction and multiplicity handling.
+- Support optional random lattice deformation for data augmentation.
+
+## Installation
+
+Install from PyPI:
+
+```bash
+pip install Pysimxrd
+```
+
+Install from the project root:
+
+```bash
+pip install .
+```
+
+For editable development:
+
+```bash
+pip install -e .
+```
+
+## Quick Start
+
+```python
+from ase.db import connect
+from Pysimxrd import generator
+
+database = connect("sim/demo_mp.db")
+x, y = generator.parser(database, entry_id=1)
+
+print(len(x), len(y))
+print(x[:5], y[:5])
+```
+
+Use the WPEM simulation path:
+
+```python
+from ase.db import connect
+from Pysimxrd import generator
+
+database = connect("sim/demo_mp.db")
+x, y = generator.parser(database, entry_id=1, sim_model="WPEM")
+```
+
+Use d-spacing output instead of 2-theta:
+
+```python
+x_d, intensity = generator.parser(
+    database,
+    entry_id=1,
+    sim_model="WPEM",
+    xrd="real",
+)
+```
+
+## Main API
+
+### `Pysimxrd.generator.parser`
+
+```python
+parser(
+    database,
+    entry_id,
+    grainsize=20,
+    prefect_orientation=[0.1, 0.1],
+    thermo_vibration=0.1,
+    zero_shift=0.1,
+    dis_detector2sample=500,
+    half_height_slit_detector=5,
+    half_height_sample=2.5,
+    deformation=False,
+    sim_model=None,
+    xrd="reciprocal",
+    background_order=6,
+    background_ratio=0.05,
+    mixture_noise_ratio=0.02,
+    lattice_extinction_ratio=0.01,
+    lattice_torsion_ratio=0.01,
+    verbose=False,
+)
+```
+
+Important arguments:
+
+- `database`: an open ASE database connection.
+- `entry_id`: row id in the ASE database.
+- `sim_model`: set to `"WPEM"` for the WPEM simulation path; use `None` for the pymatgen-backed default path.
+- `xrd`: `"reciprocal"` returns 2-theta; `"real"` returns d-spacing.
+- `deformation`: applies random lattice deformation for peak-position augmentation.
+- `lattice_extinction_ratio`: random stretching/compression ratio used when `deformation=True`.
+- `lattice_torsion_ratio`: random shear ratio used when `deformation=True`.
+- `verbose`: prints package and run metadata before simulation.
+
+Returns:
+
+```python
+x, y
+```
+
+where `x` is the simulated x-axis and `y` is the normalized intensity profile.
+
+## WPEM Deformation Behavior
+
+For `sim_model="WPEM"` with `deformation=True`, symmetry information is taken
+from the undeformed conventional cell:
+
+- space group
+- centering symbol
+- crystal system
+- atom coordinates
+
+The deformed lattice constants are then used for peak position and d-spacing
+calculation. This keeps the symmetry/extinction logic tied to the original
+crystal while allowing peak shifts from lattice perturbation.
+
+## Package Layout
+
+```text
+src/Pysimxrd/
+  __init__.py
+  generator.py
+  CGCNN_atom_emb.json
+  utils/
+    MatgenKit.py
+    WPEMsim.py
+    funs.py
+```
+
+## Development Checks
+
+Run a simple import and smoke test from the repository root:
+
+```bash
+python -c "from ase.db import connect; from Pysimxrd import generator; db=connect('sim/demo_mp.db'); x,y=generator.parser(db,1); print(len(x), len(y))"
+```
+
+Build a source distribution and wheel:
+
+```bash
+python setup.py sdist bdist_wheel
+```
+
+## Citation
+
+If this package or the associated SimXRD dataset is useful in your work, please
+cite the related project and repository:
+
+```text
+SimXRD / Pysimxrd
+Cao Bin
+https://github.com/Bin-Cao/SimXRD
+```
+
+## License
+
+This project is released under the MIT License. See `LICENSE` for details.

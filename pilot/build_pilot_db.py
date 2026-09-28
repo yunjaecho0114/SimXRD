@@ -6,6 +6,7 @@ XRD arrays are stored in row.data; the shared grid is database metadata.
 """
 
 import argparse
+from collections import Counter
 import json
 from pathlib import Path
 import sys
@@ -128,7 +129,23 @@ def main():
         restored_formula = row.formula
 
     scalar_checks = {name: restored_scalars.get(name) == value for name, value in scalars.items()}
-    scalar_checks["formula"] = restored_formula == atoms.get_chemical_formula()
+    # ASE row.formula may order elements differently from Atoms' formula.
+    # Compare both structures with the same explicit canonicalization instead.
+    canonical_before = atoms.get_chemical_formula(mode="hill")
+    canonical_after = restored.get_chemical_formula(mode="hill")
+    composition_before = Counter(atoms.get_chemical_symbols())
+    composition_after = Counter(restored.get_chemical_symbols())
+    formula_checks = {
+        "canonical_before": canonical_before,
+        "canonical_after": canonical_after,
+        "canonical_equal": canonical_before == canonical_after,
+        "element_counts_before": dict(composition_before),
+        "element_counts_after": dict(composition_after),
+        "composition_equal": composition_before == composition_after,
+    }
+    scalar_checks["formula"] = (
+        formula_checks["canonical_equal"] and formula_checks["composition_equal"]
+    )
     structure_checks = {
         "atomic_numbers": np.array_equal(atoms.numbers, restored.numbers),
         "positions": np.array_equal(atoms.positions, restored.positions),
@@ -149,6 +166,7 @@ def main():
         "stored_scalar_values": dict(scalars, formula=atoms.get_chemical_formula()),
         "restored_scalar_values": dict(restored_scalars, formula=restored_formula),
         "scalar_matches": scalar_checks,
+        "formula_verification": formula_checks,
         "structure_matches": {name: bool(value) for name, value in structure_checks.items()},
         "ideal_xrd_length": len(restored_ideal), "perturbed_xrd_length": len(restored_perturbed),
         "ideal_xrd_roundtrip": ideal_check, "perturbed_xrd_roundtrip": perturbed_check,

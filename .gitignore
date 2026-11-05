@@ -1,0 +1,75 @@
+# =====================================
+# Python cache and local environments
+# =====================================
+__pycache__/
+*.py[cod]
+*.so
+.DS_Store
+.venv/
+venv/
+.env
+.env.*
+.ipynb_checkpoints/
+
+# =====================================
+# Local databases and structure files
+# =====================================
+*.db
+*.sqlite
+*.sqlite3
+*.cif
+*.vasp
+
+# =====================================
+# Generated numerical datasets
+# =====================================
+*.npy
+*.npz
+*.pkl
+*.pickle
+*.tfrecord
+*.parquet
+*.h5
+*.hdf5
+
+# =====================================
+# Model checkpoints
+# =====================================
+*.pt
+*.pth
+*.ckpt
+/model_baseline/
+
+# =====================================
+# Generated experiment results
+# =====================================
+*.dat
+*.csv
+*.png
+*.jpg
+*.jpeg
+*.log
+*.jsonl
+
+# =====================================
+# Production dataset
+# Keep the configuration file only
+# =====================================
+/db_expansion/dataset_v1/*
+!/db_expansion/dataset_v1/generation_config.json
+
+# =====================================
+# Collaboration-generated outputs
+# =====================================
+/collaboration/outputs/
+
+# =====================================
+# Local simulation settings output
+# =====================================
+/meeting2/02_inlibrary_data/condition_*.json
+
+# =====================================
+# Private credentials
+# =====================================
+*.pem
+*.key

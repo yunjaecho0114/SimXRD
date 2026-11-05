@@ -137,3 +137,10 @@ test_loader = DataLoader(load_dataset(name='test.tfrecord'), batch_size=args.bat
 <a href="https://github.com/Bin-Cao/SimXRD/graphs/contributors">
   <img src="https://contrib.rocks/image?repo=Bin-Cao/SimXRD" />
 </a>
+
+
+## XRD Research Collaboration
+
+- [Simulation code and research workflow](collaboration/README.md)
+- [Production Dataset v1 (Google Drive)](https://drive.google.com/drive/folders/1bP2Wr4lLHy_D1kypeN4pUTQQNaWIaH7Q?usp=drive_link)
+- [Original CrystDB (Hugging Face)](https://huggingface.co/datasets/caobin/CrystDB)

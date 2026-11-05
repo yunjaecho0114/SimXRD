@@ -178,6 +178,13 @@ CrystDB: https://huggingface.co/datasets/caobin/CrystDB
 
 Download the original database after accepting its access conditions. Our selected structure IDs refer to entries in this database. Follow the dataset's non-commercial use and citation requirements.
 
+### Dataset access
+
+- [Production Dataset v1 (Google Drive)](https://drive.google.com/drive/folders/1bP2Wr4lLHy_D1kypeN4pUTQQNaWIaH7Q?usp=drive_link)
+- [Original CrystDB (Hugging Face)](https://huggingface.co/datasets/caobin/CrystDB)
+
+The Drive folder contains XRD arrays, metadata, structure-selection CSVs, and the strain sampling plan. The original CrystDB must be obtained separately from Hugging Face.
+
 ## 6. Production dataset v1 (not distributed here)
 
 The separately generated and verified research dataset contains **1,000 unique structures**, with **one ideal reference and 30 perturbed patterns per structure**: 1,000 ideal XRD arrays and 30,000 perturbed XRD arrays. A structure-level split uses 800 training, 100 validation, and 100 test structures (24,000 / 3,000 / 3,000 perturbed XRD samples). All 30 perturbations from a structure remain in the same split.

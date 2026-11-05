@@ -172,6 +172,12 @@ print(x.shape, target)
 
 The ML model must handle scaling and any additional preprocessing explicitly.
 
+### Original crystal structure database
+
+CrystDB: https://huggingface.co/datasets/caobin/CrystDB
+
+Download the original database after accepting its access conditions. Our selected structure IDs refer to entries in this database. Follow the dataset's non-commercial use and citation requirements.
+
 ## 6. Production dataset v1 (not distributed here)
 
 The separately generated and verified research dataset contains **1,000 unique structures**, with **one ideal reference and 30 perturbed patterns per structure**: 1,000 ideal XRD arrays and 30,000 perturbed XRD arrays. A structure-level split uses 800 training, 100 validation, and 100 test structures (24,000 / 3,000 / 3,000 perturbed XRD samples). All 30 perturbations from a structure remain in the same split.

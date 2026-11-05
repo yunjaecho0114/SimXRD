@@ -6,6 +6,15 @@ This directory provides examples of simulated powder X-ray diffraction (XRD) gen
 
 This is an extension of the original SimXRD software. The examples are small, inspectable demonstrations; the full research dataset is not included.
 
+### Code navigation
+
+The main research code is organized as follows:
+
+- [XRD simulation examples](examples/) — Ideal XRD, perturbed XRD, and strain labeling.
+- [Production DB pipeline](../db_expansion/) — Structure selection, simulation utilities, and dataset generation.
+- [Original SimXRD engine](../src/Pysimxrd/) — Underlying XRD simulation implementation.
+- [Git configuration](../.gitignore) — Files excluded from version control.
+
 ### Research workflow
 
 ```text

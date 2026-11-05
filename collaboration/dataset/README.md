@@ -117,6 +117,20 @@ The following files are described for reference; **they are not part of this Git
 
 The underlying `samples.csv` includes sample and structure indices, `mp_id`, the textual split, `rms_group`, `group_index`, `group_sample_index`, `stretch_bound`, `shear_bound`, `random_seed`, `sampling_attempt`, `strain_rms`, `strain_a`, `strain_b`, `strain_c`, and conventional-cell angle differences. The metadata is useful for per-bin evaluation and reproducing the generation settings.
 
+### Why both CSV files are included
+
+`strain_plan_1000x30_v1.csv` and `samples.csv` contain identical
+data in Production v1, but represent different stages of our workflow.
+
+- **strain_plan_1000x30_v1.csv**: The sampling plan prepared before
+  XRD generation, specifying deformation conditions and actual
+  strain labels for each sample.
+- **samples.csv**: The final sample metadata associated with the
+  generated XRD dataset.
+
+Both files are preserved to document the original dataset-generation
+workflow and support reproducibility.
+
 ## 6. Loading paired inputs for machine learning
 
 The following code applies **only when the local merged dataset is available**. It does not fetch or regenerate data. Run it from the repository root or change `root` accordingly.
